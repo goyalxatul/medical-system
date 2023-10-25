@@ -1,0 +1,100 @@
+#include <iostream>
+#include <iomanip> // Include the header for manipulators
+#include <string>
+using namespace std;
+
+// Forward declaration of Patient class
+class Patient;
+
+// Base class for Person
+class Person {
+protected:
+    string name;
+    int age;
+
+public:
+    Person(string n, int a) : name(n), age(a) {}
+
+    virtual void display() const {
+        cout << setw(15) << left << "Name: " << name << endl;
+        cout << setw(15) << left << "Age: " << age << endl;
+    }
+
+    string getName() const {
+        return name;
+    }
+
+    // Friend function declaration
+    friend void printPatientInfo(const Patient& patient);
+};
+
+// Doctor class inheriting from Person
+class Doctor : public Person {
+private:
+    string experience;
+
+public:
+    Doctor(string n, int a, string exp) : Person(n, a), experience(exp) {}
+
+    void display() const override {
+        Person::display();
+        cout << setw(15) << left << "Experience: " << experience << " years" << endl;
+    }
+};
+
+// Patient class inheriting from Person
+class Patient : public Person {
+private:
+    string healthIssue;
+    Doctor* attendingDoctor;
+    string previousInfo;
+
+public:
+    Patient(string n, int a, string issue, Doctor* doctor, string prev) : Person(n, a), healthIssue(issue), attendingDoctor(doctor), previousInfo(prev) {}
+
+    void display() const override {
+        Person::display();
+        cout << setw(15) << left << "Health Issue: " << healthIssue << endl;
+        cout << setw(15) << left << "Attending Doctor: " << attendingDoctor->getName() << endl;
+        cout << setw(15) << left << "Previous Info: " << previousInfo << endl;
+    }
+
+    // Friend function definition
+    friend void printPatientInfo(const Patient& patient);
+};
+
+// Friend function definition
+void printPatientInfo(const Patient& patient) {
+    cout << "\nPatient Information:" << endl;
+    patient.display();
+}
+
+int main() {
+    string patientName, doctorName, healthIssue, previousInfo, docExperience;
+    int patientAge, doctorAge;
+
+    cout << "Enter patient's name: ";
+    cin >> patientName;
+    cout << "Enter patient's age: ";
+    cin >> patientAge;
+    cout << "Enter health issue: ";
+    cin >> healthIssue;
+    cout << "Enter doctor's name: ";
+    cin >> doctorName;
+    cout << "Enter doctor's age: ";
+    cin >> doctorAge;
+    cout << "Enter doctor's experience (in years): ";
+    cin >> docExperience;
+    cout << "Enter patient's previous information: ";
+    cin >> previousInfo;
+
+    Doctor doctor(doctorName, doctorAge, docExperience);
+    Patient patient(patientName, patientAge, healthIssue, &doctor, previousInfo);
+
+    printPatientInfo(patient); // Using friend function
+
+    cout << "\nDoctor Information:" << endl;
+    doctor.display();
+
+    return 0;
+}
